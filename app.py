@@ -208,6 +208,20 @@ def stop_following(follow_id):
 def profile():
     """Update profile for current user."""
 
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    form = UserAddForm(obj=g.user)
+    user = User.authenticate(g.user.username, g.user.password)
+    if user and form.validate_on_submit():
+        g.user.username = form.username.data
+        g.user.email = form.email.data
+        g.user.image_url = form.image_url.data
+        db.session.commit()
+
+        return redirect(f'/users/{g.user.id}')
+    return render_template('users/edit.html', form=form)
     # IMPLEMENT THIS
 
 
