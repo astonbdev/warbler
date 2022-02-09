@@ -134,7 +134,6 @@ class User(db.Model):
         """
 
         user = cls.query.filter_by(username=username).first()
-        # breakpoint()
         if user:
             is_auth = bcrypt.check_password_hash(user.password, password)
             if is_auth:
@@ -147,7 +146,7 @@ class User(db.Model):
         """this is to change user password"""
 
         hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
-        
+
         user = cls.query.get_or_404(username)
         user.password = hashed_pwd
         db.session.commit()
