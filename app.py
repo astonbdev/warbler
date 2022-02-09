@@ -115,6 +115,7 @@ def logout():
     # CSRF TOKEN?
 
     do_logout()
+    flash("Logout Success.", 'success')
     return redirect('/')
     # IMPLEMENT THIS AND FIX BUG
     # DO NOT CHANGE METHOD ON ROUTE
