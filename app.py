@@ -1,5 +1,5 @@
 import os
-
+# print(os.environ['DATABASE_URL'])
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
@@ -10,7 +10,7 @@ from models import db, connect_db, User, Message
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
-
+# breakpoint()
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -112,6 +112,10 @@ def login():
 def logout():
     """Handle logout of user."""
 
+    # CSRF TOKEN?
+
+    do_logout()
+    return redirect('/')
     # IMPLEMENT THIS AND FIX BUG
     # DO NOT CHANGE METHOD ON ROUTE
 
