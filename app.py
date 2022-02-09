@@ -3,7 +3,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-
+# from sqlalchemy import or_
 from forms import UserAddForm, UserEditForm, LoginForm, MessageForm
 from models import db, connect_db, User, Message
 
@@ -64,7 +64,7 @@ def signup():
     and re-present form.
     """
 
-    form = UserEditForm()
+    form = UserAddForm()
 
     if form.validate_on_submit():
         try:
@@ -212,21 +212,22 @@ def profile():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    form = UserAddForm(obj=g.user)
+    form = UserEditForm(obj=g.user)
     user = User.authenticate(g.user.username, form.password.data)
 
     if user and form.validate_on_submit():
         g.user.username = form.username.data
         g.user.email = form.email.data
         g.user.image_url = form.image_url.data
+        g.user.header_image_url = form.header_image_url.data
+        g.user.bio = form.bio.data
         db.session.commit()
-
         return redirect(f'/users/{g.user.id}')
 
     if not user and request.method == "POST":
         # form.password.errors.append("Incorrect Password.")
         flash("Incorrect Password", "danger")
-
+        return redirect('/')
     return render_template('users/edit.html', form=form)
     # IMPLEMENT THIS
 
@@ -309,9 +310,13 @@ def homepage():
     """
 
     if g.user:
+        users_messages = [user.id for user in g.user.following]
+        users_messages.append(g.user.id)
+
         messages = (Message
                     .query
                     .order_by(Message.timestamp.desc())
+                    .filter(Message.user_id.in_(users_messages))
                     .limit(100)
                     .all())
 
