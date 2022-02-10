@@ -263,6 +263,16 @@ def delete_user():
 
     return redirect("/signup")
 
+@app.get('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    """this show user liked messages"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    return render_template('users/likes.html', user=user)
 
 ##############################################################################
 # Messages routes:
