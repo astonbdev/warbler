@@ -37,15 +37,18 @@
               {% if g.user.id == user.id %}
                 <a href="/users/profile" class="btn btn-outline-secondary">Edit Profile</a>
                 <form method="POST" action="/users/delete">
+                  {{ g.csrf_form.hidden_tag() }}
                   <button class="btn btn-outline-danger ms-2">Delete Profile</button>
                 </form>
               {% elif g.user %}
                 {% if g.user.is_following(user) %}
                   <form method="POST" action="/users/stop-following/{{ user.id }}">
+                    {{ g.csrf_form.hidden_tag() }}
                     <button class="btn btn-primary">Unfollow</button>
                   </form>
                 {% else %}
                   <form method="POST" action="/users/follow/{{ user.id }}">
+                    {{ g.csrf_form.hidden_tag() }}
                     <button class="btn btn-outline-primary">Follow</button>
                   </form>
                 {% endif %}

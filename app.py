@@ -4,8 +4,9 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 # from sqlalchemy import or_
-from forms import UserAddForm, UserEditForm, LoginForm, MessageForm, ProtectForm
-from models import db, connect_db, User, Message
+from forms import UserAddForm, UserEditForm, LoginForm, MessageForm,\
+     ProtectForm
+from models import db, connect_db, User, Message, Like
 
 CURR_USER_KEY = "curr_user"
 
@@ -120,7 +121,7 @@ def logout():
 
     form = g.csrf_form
 
-    if not form.validate_on_submit() and not g.user:
+    if not form.validate_on_submit() or not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
@@ -188,7 +189,7 @@ def add_follow(follow_id):
 
     form = g.csrf_form
 
-    if not form.validate_on_submit and not g.user:
+    if not form.validate_on_submit() or not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
@@ -205,7 +206,7 @@ def stop_following(follow_id):
 
     form = g.csrf_form
 
-    if not form.validate_on_submit() and not g.user:
+    if not form.validate_on_submit() or not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
@@ -231,7 +232,8 @@ def profile():
         g.user.username = form.username.data
         g.user.email = form.email.data
         g.user.image_url = form.image_url.data or User.image_url.default.arg
-        g.user.header_image_url = form.header_image_url.data or User.header_image_url.default.arg
+        g.user.header_image_url = (
+            form.header_image_url.data or User.header_image_url.default.arg)
         g.user.bio = form.bio.data
         db.session.commit()
         return redirect(f'/users/{g.user.id}')
@@ -250,7 +252,7 @@ def delete_user():
 
     form = g.csrf_form
 
-    if not form.validate_on_submit() and not g.user:
+    if not form.validate_on_submit() or not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
@@ -301,7 +303,7 @@ def messages_destroy(message_id):
     """Delete a message."""
     form = g.csrf_form
 
-    if not form.validate_on_submit() and not g.user:
+    if not form.validate_on_submit() or not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
