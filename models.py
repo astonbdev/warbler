@@ -141,15 +141,15 @@ class User(db.Model):
 
         return False
 
-    @classmethod
-    def change_password(cls, username, password):
-        """this is to change user password"""
+    # @classmethod
+    # def change_password(cls, username, password):
+    #     """this is to change user password"""
 
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
+    #     hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
 
-        user = cls.query.get_or_404(username)
-        user.password = hashed_pwd
-        db.session.commit()
+    #     user = cls.query.get_or_404(username)
+    #     user.password = hashed_pwd
+    #     db.session.commit()
 
 
 class Message(db.Model):
