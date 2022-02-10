@@ -17,15 +17,18 @@
                 {% if g.user.id == message.user.id %}
                   <form method="POST"
                         action="/messages/{{ message.id }}/delete">
+                        {{ g.csrf_form.hidden_tag() }}
                     <button class="btn btn-outline-danger">Delete</button>
                   </form>
                 {% elif g.user.is_following(message.user) %}
                   <form method="POST"
                         action="/users/stop-following/{{ message.user.id }}">
+                        {{ g.csrf_form.hidden_tag() }}
                     <button class="btn btn-primary">Unfollow</button>
                   </form>
                 {% else %}
                   <form method="POST" action="/users/follow/{{ message.user.id }}">
+                    {{ g.csrf_form.hidden_tag() }}
                     <button class="btn btn-outline-primary btn-sm">Follow</button>
                   </form>
                 {% endif %}
@@ -33,6 +36,21 @@
             </div>
             <p class="single-message">{{ message.text }}</p>
             <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
+            <!-- Like Logic -->
+            {% if g.user.id != message.user.id and not message.is_liked_by(g.user)%}
+            <form method="POST" action="/messages/{{ message.id }}/like">
+              {{ g.csrf_form.hidden_tag() }}
+              <button class="messages-like-bottom btn btn-sm">
+                <i class="far fa-heart"></i>
+              </button>
+            </form>
+            {% else %}
+            <form method="POST" action="/messages/{{ message.id }}/unlike">
+              {{ g.csrf_form.hidden_tag() }}
+              <button class="messages-like-bottom btn btn-sm">
+                <i class="fas fa-heart"></i></button>
+            </form>
+            {% endif %}
           </div>
         </li>
       </ul>

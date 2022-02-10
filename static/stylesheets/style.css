@@ -520,6 +520,7 @@ p.card-bio {
   bottom: 4px;
   right: 4px;
   z-index: 1;
+  color: red;
 }
 
 .single-message {

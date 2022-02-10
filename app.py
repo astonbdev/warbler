@@ -314,6 +314,41 @@ def messages_destroy(message_id):
     return redirect(f"/users/{g.user.id}")
 
 
+@app.post('/messages/<int:message_id>/like')
+def messages_like(message_id):
+    """Like a message"""
+
+    form = g.csrf_form
+
+    if not form.validate_on_submit() or not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    msg = Message.query.get(message_id)
+    # g.user.liked_messages.append(msg)
+    msg.liked_by.append(g.user)
+    db.session.commit()
+
+    return redirect(f"/messages/{message_id}")
+
+
+@app.post('/messages/<int:message_id>/unlike')
+def messages_unlike(message_id):
+    """Unlike a message"""
+
+    form = g.csrf_form
+
+    if not form.validate_on_submit() or not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    msg = Message.query.get(message_id)
+    # g.user.liked_messages.append(msg)
+    msg.liked_by.remove(g.user)
+    db.session.commit()
+
+    return redirect(f"/messages/{message_id}")
+
 ##############################################################################
 # Homepage and error pages
 
