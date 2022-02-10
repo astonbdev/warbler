@@ -74,6 +74,12 @@ class Message(db.Model):
 
     user = db.relationship('User')
 
+    def is_liked_by(self, other_user):
+        """is message liked by user?"""
+
+        # other_user = User.query.get_or_404(other_user)
+        found_user_list = [user for user in self.liked_by if user == other_user]
+        return len(found_user_list) == 1
 
 class User(db.Model):
     """User in the system."""
