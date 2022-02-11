@@ -5,10 +5,11 @@
 #    FLASK_ENV=production python -m unittest test_message_views.py
 
 
+from app import app, CURR_USER_KEY
 import os
 from unittest import TestCase
 
-from models import db, connect_db, Message, User
+from models import db, Message, User, Like
 
 # BEFORE we import our app, let's set an environmental variable
 # to use a different database for tests (we need to do this
@@ -19,7 +20,6 @@ os.environ['DATABASE_URL'] = "postgresql:///warbler_test"
 
 # Now we can import app
 
-from app import app, CURR_USER_KEY
 
 # Disables DebugToolbar
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -50,8 +50,15 @@ class MessageViewTestCase(TestCase):
                                     email="test@test.com",
                                     password="testuser",
                                     image_url=None)
-
+        self.msg = Message(text="Test Text")
         db.session.commit()
+
+    def tearDown(self):
+        """reset the database"""
+
+        User.query.delete()
+        Message.query.delete()
+        Like.query.delete()
 
     def test_add_message(self):
         """Can use add a message?"""
@@ -84,4 +91,23 @@ class MessageViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
 
             self.assertIn("This field is required", html)
+
+    def test_show_message(self):
+        """this test for display message"""
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            testuser = User.query.filter_by(username='testuser').one()
+            testuser.messages.append(self.msg)
+            db.session.add(self.msg)
+            db.session.commit()
+
+            resp = c.get(f"/messages/{self.msg.id}")
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Test Text", html)
+
 
