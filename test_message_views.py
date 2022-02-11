@@ -21,6 +21,9 @@ os.environ['DATABASE_URL'] = "postgresql:///warbler_test"
 
 from app import app, CURR_USER_KEY
 
+# Disables DebugToolbar
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+
 # Create our tables (we do this here, so we only create the tables
 # once for all tests --- in each test, we'll delete the data
 # and create fresh new clean test data
@@ -70,3 +73,15 @@ class MessageViewTestCase(TestCase):
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            resp = c.post("/messages/new")
+
+            self.assertEqual(resp.status_code, 200)
+            html = resp.get_data(as_text=True)
+
+            self.assertIn("This field is required", html)
+
