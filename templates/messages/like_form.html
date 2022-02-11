@@ -8,6 +8,7 @@
     {% elif g.user.id != message.user.id %}
     <form method="POST" action="/messages/{{ message.id }}/unlike">
         {{ g.csrf_form.hidden_tag() }}
+        <input type="hidden" name="prev_url" value="{{ request.url }}">
         <button class="messages-like-bottom btn btn-sm">
         <i class="fas fa-heart"></i></button>
     </form>

@@ -9,6 +9,7 @@ from forms import UserAddForm, UserEditForm, LoginForm, MessageForm,\
 from models import db, connect_db, User, Message
 
 CURR_USER_KEY = "curr_user"
+BASE_URL = "http://localhost:5001"
 
 app = Flask(__name__)
 # breakpoint()
@@ -345,7 +346,7 @@ def messages_like(message_id):
     msg.liked_by.append(g.user)
     db.session.commit()
 
-    return redirect(f"/messages/{message_id}")
+    return redirect(request.form.get("prev_url", "/"))
 
 
 @app.post('/messages/<int:message_id>/unlike')
@@ -363,7 +364,7 @@ def messages_unlike(message_id):
     msg.liked_by.remove(g.user)
     db.session.commit()
 
-    return redirect(f"/messages/{message_id}")
+    return redirect(request.form.get("prev_url", "/"))
 
 ##############################################################################
 # Homepage and error pages
