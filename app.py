@@ -263,6 +263,9 @@ def delete_user():
 
     return redirect("/signup")
 
+# PART 2 CODE REVIEW
+
+
 @app.get('/users/<int:user_id>/likes')
 def show_likes(user_id):
     """this show user liked messages"""
@@ -276,6 +279,7 @@ def show_likes(user_id):
 
 ##############################################################################
 # Messages routes:
+
 
 @app.route('/messages/new', methods=["GET", "POST"])
 def messages_add():
@@ -322,6 +326,8 @@ def messages_destroy(message_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
+
+# PART 2 CODE REVIEW
 
 
 @app.post('/messages/<int:message_id>/like')
@@ -387,11 +393,6 @@ def homepage():
     else:
         return render_template('home-anon.html')
 
-##############################################################################
-# Likes Routes
-
-
-
 
 ##############################################################################
 # Turn off all caching in Flask
@@ -400,6 +401,7 @@ def homepage():
 #
 # https://stackoverflow.com/questions/34066804/disabling-caching-in-flask
 
+
 @app.after_request
 def add_header(response):
     """Add non-caching headers on every request."""
@@ -407,4 +409,3 @@ def add_header(response):
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
     response.cache_control.no_store = True
     return response
-

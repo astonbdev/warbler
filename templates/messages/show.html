@@ -37,20 +37,7 @@
             <p class="single-message">{{ message.text }}</p>
             <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
             <!-- Like Logic -->
-            {% if g.user.id != message.user.id and not message.is_liked_by(g.user)%}
-            <form method="POST" action="/messages/{{ message.id }}/like">
-              {{ g.csrf_form.hidden_tag() }}
-              <button class="messages-like-bottom btn btn-sm">
-                <i class="far fa-heart"></i>
-              </button>
-            </form>
-            {% else %}
-            <form method="POST" action="/messages/{{ message.id }}/unlike">
-              {{ g.csrf_form.hidden_tag() }}
-              <button class="messages-like-bottom btn btn-sm">
-                <i class="fas fa-heart"></i></button>
-            </form>
-            {% endif %}
+            {% include 'messages/like_form.html' %}
           </div>
         </li>
       </ul>

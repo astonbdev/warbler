@@ -78,8 +78,10 @@ class Message(db.Model):
         """is message liked by user?"""
 
         # other_user = User.query.get_or_404(other_user)
-        found_user_list = [user for user in self.liked_by if user == other_user]
+        found_user_list = [
+            user for user in self.liked_by if user == other_user]
         return len(found_user_list) == 1
+
 
 class User(db.Model):
     """User in the system."""
@@ -143,9 +145,9 @@ class User(db.Model):
     )
 
     liked_messages = db.relationship(
-       "Message",
-       secondary="likes",
-       backref="liked_by"
+        "Message",
+        secondary="likes",
+        backref="liked_by"
     )
 
     def __repr__(self):
