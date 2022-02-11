@@ -69,4 +69,4 @@ class UserModelTestCase(TestCase):
         db.session.add(self.user2)
         db.session.commit()
 
-        self.assertNotEqual(self.user.is_following(self.user2), False)
+        self.assertEqual(self.user.is_following(self.user2), False)
