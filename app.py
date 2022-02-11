@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 # from sqlalchemy import or_
 from forms import UserAddForm, UserEditForm, LoginForm, MessageForm,\
-     ProtectForm
+    ProtectForm
 from models import db, connect_db, User, Message
 
 CURR_USER_KEY = "curr_user"
