@@ -46,12 +46,13 @@ class MessageViewTestCase(TestCase):
 
         self.client = app.test_client()
 
-        self.testuser = User.signup(username="testuser",
+        testuser = User.signup(username="testuser",
                                     email="test@test.com",
                                     password="testuser",
                                     image_url=None)
         self.msg = Message(text="Test Text")
         db.session.commit()
+        self.testuser_id = testuser.id
 
     def tearDown(self):
         """reset the database"""
@@ -63,27 +64,31 @@ class MessageViewTestCase(TestCase):
     def test_add_message(self):
         """Can use add a message?"""
 
+        # test authorization
+        with self.client as c:
+            resp = c.post("/messages/new", data={"text": "Hello"}, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('Access unauthorized.', html)
         # Since we need to change the session to mimic logging in,
         # we need to use the changing-session trick:
 
+        # test redirect and valid data
         with self.client as c:
             with c.session_transaction() as sess:
-                sess[CURR_USER_KEY] = self.testuser.id
-
-            # Now, that session setting is saved, so we can have
-            # the rest of ours test
+                sess[CURR_USER_KEY] = self.testuser_id
 
             resp = c.post("/messages/new", data={"text": "Hello"})
-
-            # Make sure it redirects
             self.assertEqual(resp.status_code, 302)
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
 
+        # test bad data
         with self.client as c:
             with c.session_transaction() as sess:
-                sess[CURR_USER_KEY] = self.testuser.id
+                sess[CURR_USER_KEY] = self.testuser_id
 
             resp = c.post("/messages/new")
 
@@ -94,14 +99,13 @@ class MessageViewTestCase(TestCase):
 
     def test_show_message(self):
         """this test for display message"""
-
+        
         with self.client as c:
             with c.session_transaction() as sess:
-                sess[CURR_USER_KEY] = self.testuser.id
+                sess[CURR_USER_KEY] = self.testuser_id
 
-            testuser = User.query.filter_by(username='testuser').one()
+            testuser = User.query.get(self.testuser_id)
             testuser.messages.append(self.msg)
-            db.session.add(self.msg)
             db.session.commit()
 
             resp = c.get(f"/messages/{self.msg.id}")
@@ -110,4 +114,4 @@ class MessageViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Test Text", html)
 
-
+    
