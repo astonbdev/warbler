@@ -72,6 +72,9 @@ class Message(db.Model):
         nullable=False,
     )
 
+    def __repr__(self):
+        return f"<Message #{self.id}>"
+
     user = db.relationship('User')
 
     def is_liked_by(self, other_user):
