@@ -262,8 +262,6 @@ def delete_user():
 
     return redirect("/signup")
 
-# PART 2 CODE REVIEW
-
 
 @app.get('/users/<int:user_id>/likes')
 def show_likes(user_id):

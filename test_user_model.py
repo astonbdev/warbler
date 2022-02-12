@@ -39,7 +39,7 @@ class UserModelTestCase(TestCase):
         Follows.query.delete()
 
         self.client = app.test_client()
-
+        #TODO commit models, save ids
         self.user = User(
             email="test@test.com",
             username="testuser",
@@ -99,7 +99,8 @@ class UserModelTestCase(TestCase):
 
     def test_signup(self):
         """this test the signup functionality"""
-
+        # tests to chek lengths of followers, followed_by etc
+        # datbase updated as you expect
         user = User.signup(self.user.username,
                            self.user.email,
                            self.user.password,
@@ -121,9 +122,9 @@ class UserModelTestCase(TestCase):
                            self.user.password,
                            self.user.image_url)
         db.session.commit()
+        #set this to a variable, save line length
         User.authenticate(user.username, "HASHED_PASSWORD")
         self.assertEqual(User.authenticate(self.user.username, "HASHED_PASSWORD"), user)
         self.assertEqual(User.authenticate(self.user.username, "1HASHED_PASSWORD"), False)
         self.assertEqual(User.authenticate('BAD_USERNAME', "HASHED_PASSWORD"), False)
 
-    

@@ -33,7 +33,7 @@ class MessageModelTestCase(TestCase):
 
     def setUp(self):
         """Create test client, add sample data."""
-
+        # TODO: commit models, hold onto ids as tests are built out
         User.query.delete()
         Message.query.delete()
         Follows.query.delete()
@@ -64,6 +64,9 @@ class MessageModelTestCase(TestCase):
 
     def test_message_model(self):
         """Test basic message model"""
+        # more explicit docstring
+
+        # Move into setUp
         db.session.add(self.user, self.message)
         self.user.messages.append(self.message)
         db.session.commit()
@@ -74,6 +77,7 @@ class MessageModelTestCase(TestCase):
     def test_is_liked_by(self):
         """Test is_liked_by method of Message"""
 
+        # Move into setUp
         db.session.add(self.user)
         db.session.add(self.user2)
         db.session.add(self.message)
@@ -86,4 +90,5 @@ class MessageModelTestCase(TestCase):
         db.session.commit()
 
         self.assertEqual(self.message.is_liked_by(self.user2), True)
+
 

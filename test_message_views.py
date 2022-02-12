@@ -151,3 +151,5 @@ class MessageViewTestCase(TestCase):
 
             msg = Message.query.filter_by(id=self.msg.id).one_or_none()
             self.assertIsNone(msg)
+
+        #TODO add delete with diff user
